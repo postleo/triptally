@@ -69,17 +69,6 @@ triptally-demo/
 2. Open `index.html` in a web browser
 3. No server or installation required
 
-### Development Server (Optional)
-```bash
-# Using Python
-python -m http.server 8000
-
-# Using Node.js
-npx http-server
-
-# Using PHP
-php -S localhost:8000
-```
 
 ### Demo Navigation
 1. **Start Screen**: Choose between onboarding demo or direct dashboard access
