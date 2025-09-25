@@ -251,10 +251,44 @@ function goToMainApp() {
 
 // Navigation back to main app
 function goToMainApp() {
-    // In a real integration, this would navigate back to Tripflow
-    alert('This would navigate back to the main Tripflow app. In the demo, this just shows an alert.');
-    // Example: window.location.href = '/tripflow' or window.parent.postMessage('navigate-to-tripflow', '*');
+    // Show modal instead of alert
+    const modal = document.getElementById('tripflow-modal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
 }
+
+function closeModal() {
+    const modal = document.getElementById('tripflow-modal');
+    modal.classList.remove('active');
+    document.body.style.overflow = ''; // Restore scrolling
+}
+
+function confirmGoToMainApp() {
+    // In a real integration, this would navigate back to Tripflow
+    closeModal();
+    // Example implementations:
+    // window.location.href = '/tripflow'
+    // window.parent.postMessage('navigate-to-tripflow', '*')
+    // For demo purposes, show a brief confirmation
+    setTimeout(() => {
+        alert('Navigation to Tripflow would occur here in a real implementation.');
+    }, 300);
+}
+
+// Close modal when clicking outside of it
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('tripflow-modal');
+    if (e.target === modal) {
+        closeModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeModal();
+    }
+});
 
 // Theme Toggle
 function toggleTheme() {
