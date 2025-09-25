@@ -112,7 +112,7 @@
                         <hr class="sidebar-divider">
                         <ul class="sidebar-nav">
                             <li><a href="#" onclick="goToMainApp()" class="main-app-link">
-                                <i class="fas fa-arrow-left"></i>Back to Tripflow
+                                <i class="fas fa-arrow-left"></i>Back to Travel Wizard
                             </a></li>
                         </ul>
                     </div>
@@ -487,6 +487,29 @@
                     </div>
                 </div>
             </main>
+        </div>
+    </div>
+
+    <!-- Modal for Back to Travel Wizard -->
+    <div class="modal-overlay" id="travelwizard-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Return to Travel Wizard</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon">
+                    <i class="fas fa-arrow-left"></i>
+                </div>
+                <p>You're about to leave Triptally and return to the main Travel Wizard application.</p>
+                <p class="modal-note">In a real implementation, this would seamlessly navigate back to your trip planning interface.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Stay in Triptally</button>
+                <button class="btn btn-primary" onclick="confirmGoToMainApp()">Go to Travel Wizard</button>
+            </div>
         </div>
     </div>
 
