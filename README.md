@@ -68,6 +68,7 @@ triptally-demo/
 1. Download or clone the demo files
 2. Open `index.html` in a web browser
 3. No server or installation required
+4. ALternatively the demo can be viewed at triptally-kappa.vercel.app/
 
 
 ### Demo Navigation
