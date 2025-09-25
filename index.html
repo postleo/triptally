@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triptally - AI-Powered Budget Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --navy-primary: #00b4a6;
+            --navy-secondary: #4dd0e1;
+            --navy-light: #80cbc4;
+            --navy-dark: #006064;
+            --white: #ffffff;
+            --light-gray: #f5f7fa;
+            --medium-gray: #e1e5e9;
+            --dark-gray: #64748b;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --white: #0f172a;
+            --light-gray: #1e293b;
+            --medium-gray: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--white);
+            color: var(--text-primary);
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Start Screen Styles */
+        .start-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--navy-primary), var(--navy-secondary));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-screen::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0px, 0px) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .start-content {
+            text-align: center;
+            color: white;
+            z-index: 1;
+            max-width: 500px;
+            padding: 2rem;
+        }
+
+        .start-logo {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .start-logo .tally {
+            color: #4dd0e1;
+        }
+
+        .start-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .start-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .start-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .start-btn-primary {
+            background-color: white;
+            color: var(--navy-primary);
+        }
+
+        .start-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+        }
+
+        .start-btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .start-btn-secondary:hover {
+            background-color: white;
+            color: var(--navy-primary);
+        }
+
+        .theme-toggle-start {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle-start:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Onboarding Screen */
+        .onboarding-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light-gray);
+            padding: 2rem;
+        }
+
+        .onboarding-container {
+            max-width: 800px;
+            width: 100%;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .onboarding-header {
+            background: linear-gradient(135deg, var(--navy-primary), var(--navy-secondary));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .onboarding-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .onboarding-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .onboarding-chat {
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .onboarding-messages {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .onboarding-controls {
+            padding: 1.5rem;
+            border-top: 1px solid var(--medium-gray);
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .onboarding-btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .onboarding-btn-primary {
+            background-color: var(--navy-primary);
+            color: white;
+        }
+
+        .onboarding-btn-primary:hover {
+            background-color: var(--navy-secondary);
+        }
+
+        .onboarding-btn-secondary {
+            background-color: var(--medium-gray);
+            color: var(--text-primary);
+        }
+
+        .onboarding-btn-secondary:hover {
+            background-color: var(--dark-gray);
+            color: white;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--navy-primary);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo .tally {
+            color: #4dd0e1;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid white;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle:hover {
+            background-color: white;
+            color: var(--navy-primary);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            height: calc(100vh - 80px);
+            margin-top: 80px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--light-gray);
+            border-right: 1px solid var(--medium-gray);
+            padding: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 80px);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 300px;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            flex: 1;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background-color: var(--navy-primary);
+            color: white;
+        }
+
+        .sidebar-nav i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem 0;
+        }
+
+        .sidebar-divider {
+            border: none;
+            height: 1px;
+            background-color: var(--medium-gray);
+            margin: 1rem 1.5rem;
+        }
+
+        .main-app-link {
+            color: var(--navy-primary) !important;
+            font-weight: 600 !important;
+        }
+
+        .main-app-link:hover {
+            background-color: var(--navy-primary) !important;
+            color: white !important;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            padding: 2rem;
+            background-color: var(--white);
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            width: calc(100% - 300px);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--navy-primary);
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--light-gray);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--navy-primary);
+        }
+
+        .card-icon {
+            color: var(--navy-secondary);
+            font-size: 1.2rem;
+        }
+
+        /* Budget Overview */
+        .budget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--navy-primary), var(--navy-secondary));
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Progress Bars */
+        .progress-bar {
+            background-color: var(--medium-gray);
+            border-radius: 50px;
+            height: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--navy-primary);
+            transition: width 0.5s ease;
+            border-radius: 50px;
+        }
+
+        .progress-fill.warning {
+            background-color: var(--warning);
+        }
+
+        .progress-fill.danger {
+            background-color: var(--danger);
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+            background-color: var(--light-gray);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--medium-gray);
+        }
+
+        .chat-header {
+            background-color: var(--navy-primary);
+            color: white;
+            padding: 1rem;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background-color: var(--navy-primary);
+            color: white;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background-color: var(--white);
+            border: 1px solid var(--medium-gray);
+            color: var(--text-primary);
+        }
+
+        .chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid var(--medium-gray);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: 50px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .chat-send {
+            background-color: var(--navy-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chat-send:hover {
+            background-color: var(--navy-secondary);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: var(--navy-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--navy-secondary);
+        }
+
+        .btn-secondary {
+            background-color: var(--medium-gray);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--dark-gray);
+            color: white;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background-color: var(--white);
+            color: var(--text-primary);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--navy-primary);
+            box-shadow: 0 0 0 3px rgba(0, 180, 166, 0.1);
+        }
+
+        /* Expense List */
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: var(--white);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .expense-item:hover {
+            box-shadow: var(--shadow);
+        }
+
+        .expense-details {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .expense-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--navy-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .expense-info h4 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .expense-info p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .expense-amount {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Badge */
+        .badge {
+            background-color: var(--success);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .ml-auto {
+            margin-left: auto;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .alert-danger {
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* Charts */
+        .chart-container {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background-color: var(--light-gray);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Horizontal Form Layout for Expenses */
+        .expense-form-row {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .expense-form-row .form-group {
+            margin-bottom: 0;
+        }
+
+        .expense-form-row .form-group:first-child {
+            flex: 1;
+        }
+
+        .expense-form-row .form-group:nth-child(2) {
+            width: 120px;
+        }
+
+        .expense-form-row .form-group:nth-child(3) {
+            width: 150px;
+        }
+
+        /* Screen visibility */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-layout {
+                height: calc(100vh - 80px);
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -300px;
+                top: 80px;
+                width: 300px;
+                z-index: 999;
+                transition: left 0.3s ease;
+                background-color: var(--white);
+                border-right: 1px solid var(--medium-gray);
+                box-shadow: var(--shadow-lg);
+                height: calc(100vh - 80px);
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .budget-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .start-logo {
+                font-size: 3rem;
+            }
+
+            .start-buttons {
+                gap: 0.75rem;
+            }
+
+            .theme-toggle-start {
+                top: 1rem;
+                right: 1rem;
+            }
+
+            .onboarding-screen {
+                padding: 1rem;
+            }
+
+            .onboarding-header h1 {
+                font-size: 2rem;
+            }
+
+            .expense-form-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .expense-form-row .form-group:first-child,
+            .expense-form-row .form-group:nth-child(2),
+            .expense-form-row .form-group:nth-child(3) {
+                width: 100%;
+            }
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .align-center { align-items: center; }
+        .gap-1 { gap: 0.5rem; }
+        .gap-2 { gap: 1rem; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <!-- Start Screen -->
+    <div class="screen active" id="start-screen">
+        <div class="start-screen">
+            <button class="theme-toggle-start" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
+            
+            <div class="start-content">
+                <h1 class="start-logo">Trip<span class="tally">tally</span></h1>
+                <p class="start-subtitle">Your AI-powered travel budget companion. Meet Nora, your personal travel assistant who'll help you plan and track your perfect trip.</p>
+                
+                <div class="start-buttons">
+                    <button class="start-btn start-btn-primary" onclick="startOnboarding()">
+                        <i class="fas fa-comments"></i>
+                        Chat with Nora
+                    </button>
+                    <button class="start-btn start-btn-secondary" onclick="goToDashboard()">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Go to Dashboard
+                    </button>
+                </div>
+                
+                <p style="opacity: 0.7; font-size: 0.9rem;">New to Triptally? Start with Nora for a guided setup!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onboarding Screen -->
+    <div class="screen" id="onboarding-screen">
+        <div class="onboarding-screen">
+            <div class="onboarding-container">
+                <div class="onboarding-header">
+                    <h1>Meet Nora</h1>
+                    <p>Your AI travel assistant will guide you through setting up your first trip budget</p>
+                </div>
+                
+                <div class="onboarding-chat">
+                    <div class="onboarding-messages" id="onboarding-messages">
+                        <!-- Messages will be populated by JavaScript -->
+                    </div>
+                    
+                    <div class="onboarding-controls">
+                        <button class="onboarding-btn onboarding-btn-primary" id="start-demo" onclick="startDemo()">
+                            Start Demo
+                        </button>
+                        <button class="onboarding-btn onboarding-btn-secondary" onclick="skipOnboarding()">
+                            Skip to Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div class="screen" id="main-app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <a href="#" class="logo">Trip<span class="tally">tally</span></a>
+                    <div class="nav-controls">
+                        <button class="theme-toggle" onclick="toggleTheme()">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button class="menu-toggle" onclick="toggleSidebar()">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <nav>
+                    <ul class="sidebar-nav">
+                        <li><a href="#" onclick="showPage('dashboard')" class="active">
+                            <i class="fas fa-home"></i>Dashboard
+                        </a></li>
+                        <li><a href="#" onclick="showPage('budget-setup')">
+                            <i class="fas fa-plus-circle"></i>Budget Setup
+                        </a></li>
+                        <li><a href="#" onclick="showPage('chat')">
+                            <i class="fas fa-comments"></i>Chat with Nora
+                        </a></li>
+                        <li><a href="#" onclick="showPage('expenses')">
+                            <i class="fas fa-receipt"></i>Expenses
+                        </a></li>
+                        <li><a href="#" onclick="showPage('briefings')">
+                            <i class="fas fa-calendar-day"></i>Daily Briefings
+                        </a></li>
+                    </ul>
+                    
+                    <!-- Navigation back to main app -->
+                    <div class="sidebar-footer">
+                        <hr class="sidebar-divider">
+                        <ul class="sidebar-nav">
+                            <li><a href="#" onclick="goToMainApp()" class="main-app-link">
+                                <i class="fas fa-arrow-left"></i>Back to Tripflow
+                            </a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Dashboard Page -->
+                <div class="page active" id="dashboard">
+                    <div class="page-header">
+                        <h1 class="page-title">Welcome to Triptally</h1>
+                        <p class="page-subtitle">Your AI-powered travel budget companion</p>
+                    </div>
+
+                    <div class="budget-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-budget">$1,200</div>
+                            <div class="stat-label">Total Budget</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="spent-amount">$485</div>
+                            <div class="stat-label">Spent</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="remaining-amount">$715</div>
+                            <div class="stat-label">Remaining</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="days-left">7</div>
+                            <div class="stat-label">Days Left</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title" id="trip-name">Current Trip: Bali Getaway</h3>
+                            <i class="fas fa-plane card-icon"></i>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%;"></div>
+                        </div>
+                        <p>40% of budget used - You're on track!</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Budget Breakdown</h3>
+                            <i class="fas fa-chart-pie card-icon"></i>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-utensils"></i></div>
+                                <div class="expense-info">
+                                    <h4>Dining</h4>
+                                    <p>$150 / $300 used</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount">$300</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-bed"></i></div>
+                                <div class="expense-info">
+                                    <h4>Accommodation</h4>
+                                    <p>$250 / $400 used</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount">$400</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-ticket-alt"></i></div>
+                                <div class="expense-info">
+                                    <h4>Activities</h4>
+                                    <p>$85 / $300 used</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount">$300</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-car"></i></div>
+                                <div class="expense-info">
+                                    <h4>Transportation</h4>
+                                    <p>$0 / $200 used</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount">$200</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Setup Page -->
+                <div class="page" id="budget-setup">
+                    <div class="page-header">
+                        <h1 class="page-title">Budget Setup</h1>
+                        <p class="page-subtitle">Create your personalized travel budget</p>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">Trip Information</h3>
+                        <form>
+                            <div class="form-group">
+                                <label class="form-label">Trip Name</label>
+                                <input type="text" class="form-input" placeholder="e.g., Bali Adventure" value="Bali Getaway" id="trip-name-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Total Budget</label>
+                                <input type="number" class="form-input" placeholder="1200" value="1200" id="total-budget-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Trip Duration (days)</label>
+                                <input type="number" class="form-input" placeholder="10" value="10" id="duration-input">
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">Budget Categories</h3>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-utensils"></i></div>
+                                <div class="expense-info">
+                                    <h4>Dining</h4>
+                                    <input type="number" class="form-input" style="width: 120px;" value="300" id="dining-budget">
+                                </div>
+                            </div>
+                            <div class="expense-amount">25%</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-bed"></i></div>
+                                <div class="expense-info">
+                                    <h4>Accommodation</h4>
+                                    <input type="number" class="form-input" style="width: 120px;" value="400" id="accommodation-budget">
+                                </div>
+                            </div>
+                            <div class="expense-amount">33%</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-ticket-alt"></i></div>
+                                <div class="expense-info">
+                                    <h4>Activities</h4>
+                                    <input type="number" class="form-input" style="width: 120px;" value="300" id="activities-budget">
+                                </div>
+                            </div>
+                            <div class="expense-amount">25%</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-car"></i></div>
+                                <div class="expense-info">
+                                    <h4>Transportation</h4>
+                                    <input type="number" class="form-input" style="width: 120px;" value="200" id="transport-budget">
+                                </div>
+                            </div>
+                            <div class="expense-amount">17%</div>
+                        </div>
+                        <button class="btn btn-primary mt-3">Save Budget</button>
+                    </div>
+                </div>
+
+                <!-- Chat Page -->
+                <div class="page" id="chat">
+                    <div class="page-header">
+                        <h1 class="page-title">Chat with Nora</h1>
+                        <p class="page-subtitle">Your AI travel assistant is here to help</p>
+                    </div>
+
+                    <div class="chat-container">
+                        <div class="chat-header">
+                            <i class="fas fa-robot"></i>
+                            <span>Nora - AI Travel Assistant</span>
+                            <div class="ml-auto">
+                                <span class="badge">Online</span>
+                            </div>
+                        </div>
+                        <div class="chat-messages" id="chat-messages">
+                            <!-- Chat history will be populated here -->
+                        </div>
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" placeholder="Chat functionality is currently in demo mode..." id="chat-input" disabled>
+                            <button class="chat-send" disabled>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Chat History</h3>
+                            <i class="fas fa-history card-icon"></i>
+                        </div>
+                        <p>Your conversation history with Nora from the onboarding will appear here. This includes your trip setup and any budget discussions.</p>
+                        <div id="chat-history-content">
+                            <!-- Will be populated if user completed onboarding -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expenses Page -->
+                <div class="page" id="expenses">
+                    <div class="page-header">
+                        <h1 class="page-title">Expense Tracking</h1>
+                        <p class="page-subtitle">Monitor your spending in real-time</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Add New Expense</h3>
+                            <i class="fas fa-plus card-icon"></i>
+                        </div>
+                        <div class="expense-form-row">
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <input type="text" class="form-input" placeholder="e.g., Lunch at beachside restaurant">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Amount</label>
+                                <input type="number" class="form-input" placeholder="25">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Category</label>
+                                <select class="form-input">
+                                    <option>Dining</option>
+                                    <option>Accommodation</option>
+                                    <option>Activities</option>
+                                    <option>Transportation</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="addExpense()">Add Expense</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Expenses</h3>
+                            <i class="fas fa-history card-icon"></i>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-coffee"></i></div>
+                                <div class="expense-info">
+                                    <h4>Coffee at Local Cafe</h4>
+                                    <p>Today, 10:30 AM • Dining</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount" style="color: #ef4444;">-$40</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-utensils"></i></div>
+                                <div class="expense-info">
+                                    <h4>Dinner at Warung</h4>
+                                    <p>Yesterday, 7:00 PM • Dining</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount" style="color: #ef4444;">-$25</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-taxi"></i></div>
+                                <div class="expense-info">
+                                    <h4>Taxi to Temple</h4>
+                                    <p>Yesterday, 2:00 PM • Transportation</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount" style="color: #ef4444;">-$15</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-ticket-alt"></i></div>
+                                <div class="expense-info">
+                                    <h4>Temple Entrance Fee</h4>
+                                    <p>Yesterday, 2:30 PM • Activities</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount" style="color: #ef4444;">-$10</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Briefings Page -->
+                <div class="page" id="briefings">
+                    <div class="page-header">
+                        <h1 class="page-title">Daily Briefings</h1>
+                        <p class="page-subtitle">Your personalized travel updates</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Today's Briefing</h3>
+                            <i class="fas fa-calendar-day card-icon"></i>
+                        </div>
+                        <div class="alert alert-success">
+                            <i class="fas fa-sun"></i>
+                            <div>
+                                <strong>Good morning!</strong> Perfect beach weather today - 85°F and sunny. You have $250 remaining for today's adventures.
+                            </div>
+                        </div>
+                        <h4 style="margin-top: 1.5rem; margin-bottom: 1rem;">Today's Schedule</h4>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-swimmer"></i></div>
+                                <div class="expense-info">
+                                    <h4>Beach Day at Nusa Dua</h4>
+                                    <p>10:00 AM - Don't forget sunscreen!</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount">$30 planned</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-utensils"></i></div>
+                                <div class="expense-info">
+                                    <h4>Lunch at Beachside Warung</h4>
+                                    <p>1:00 PM - Try the fresh seafood</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount">$20 estimated</div>
+                        </div>
+                        <button class="btn btn-primary" style="margin-top: 1rem;">
+                            <i class="fas fa-play"></i> Play Audio Briefing
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Budget Status</h3>
+                            <i class="fas fa-wallet card-icon"></i>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%;"></div>
+                        </div>
+                        <p><strong>40% used</strong> - You're perfectly on track! Keep up the great balance.</p>
+                        
+                        <h4 class="mt-3">Quick Tips</h4>
+                        <ul style="padding-left: 1.5rem; margin-top: 0.5rem; line-height: 1.6;">
+                            <li>Consider the local fish market for tonight's dinner - authentic and budget-friendly</li>
+                            <li>Beach umbrellas cost $5/day vs $15 at resorts</li>
+                            <li>Free sunset viewing at Tanah Lot temple (just parking fee)</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Previous Briefings</h3>
+                            <i class="fas fa-history card-icon"></i>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-calendar-alt"></i></div>
+                                <div class="expense-info">
+                                    <h4>Yesterday's Summary</h4>
+                                    <p>Temple visits and local cuisine - stayed $15 under budget</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary">View</button>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-calendar-alt"></i></div>
+                                <div class="expense-info">
+                                    <h4>Day 1 - Arrival</h4>
+                                    <p>Airport transfer and hotel check-in went smoothly</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary">View</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentScreen = 'start-screen';
+        let onboardingStep = 0;
+        let chatHistory = [];
+        let tripData = {
+            name: '',
+            budget: 0,
+            duration: 0,
+            categories: {
+                dining: 0,
+                accommodation: 0,
+                activities: 0,
+                transportation: 0
+            }
+        };
+
+        // Onboarding conversation script
+        const onboardingScript = [
+            {
+                type: 'ai',
+                message: 'Hi there! I\'m Nora, your AI travel assistant. I\'m so excited to help you plan your next adventure! 👋',
+                delay: 1000
+            },
+            {
+                type: 'ai',
+                message: 'Let\'s start by setting up your first trip budget. What destination are you planning to visit?',
+                delay: 2000
+            },
+            {
+                type: 'user',
+                message: 'I\'m planning a trip to Bali!',
+                delay: 3500
+            },
+            {
+                type: 'ai',
+                message: 'Bali! What an amazing choice! 🌴 The beaches, temples, and local culture are incredible. How many days are you planning to stay?',
+                delay: 1500
+            },
+            {
+                type: 'user',
+                message: '10 days',
+                delay: 2000
+            },
+            {
+                type: 'ai',
+                message: 'Perfect! 10 days gives you plenty of time to explore. Now, what\'s your total budget for this trip?',
+                delay: 1500
+            },
+            {
+                type: 'user',
+                message: '$1,200',
+                delay: 2000
+            },
+            {
+                type: 'ai',
+                message: 'Great! $1,200 for 10 days in Bali is totally doable. Let me suggest how to split this budget across different categories:',
+                delay: 1500
+            },
+            {
+                type: 'ai',
+                message: '🍽️ Dining: $300 (25%) - Mix of local warungs and nice restaurants<br>🏨 Accommodation: $400 (33%) - Good quality hotels or guesthouses<br>🎯 Activities: $300 (25%) - Temples, tours, and experiences<br>🚗 Transportation: $200 (17%) - Taxis, scooter rental, and airport transfers',
+                delay: 2500
+            },
+            {
+                type: 'user',
+                message: 'That sounds perfect! How do I track my expenses?',
+                delay: 2000
+            },
+            {
+                type: 'ai',
+                message: 'I\'ll be with you every step of the way! You can chat with me anytime to log expenses, get recommendations, or ask for budget advice. I\'ll help you stay on track and find great deals! 💡',
+                delay: 2000
+            },
+            {
+                type: 'ai',
+                message: 'Your Bali adventure budget is all set up! Ready to explore your dashboard and start planning? ✈️',
+                delay: 1500
+            }
+        ];
+
+        // Screen management
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            currentScreen = screenId;
+        }
+
+        function startOnboarding() {
+            showScreen('onboarding-screen');
+            document.getElementById('onboarding-messages').innerHTML = '';
+            onboardingStep = 0;
+        }
+
+        function goToDashboard() {
+            showScreen('main-app');
+            updateDashboardWithDefaults();
+        }
+
+        function skipOnboarding() {
+            showScreen('main-app');
+            updateDashboardWithDefaults();
+        }
+
+        // Onboarding demo
+        function startDemo() {
+            const startButton = document.getElementById('start-demo');
+            startButton.textContent = 'Demo in Progress...';
+            startButton.disabled = true;
+            
+            onboardingStep = 0;
+            chatHistory = [];
+            playNextMessage();
+        }
+
+        function playNextMessage() {
+            if (onboardingStep >= onboardingScript.length) {
+                // Demo complete
+                setTimeout(() => {
+                    const controls = document.querySelector('.onboarding-controls');
+                    controls.innerHTML = `
+                        <button class="onboarding-btn onboarding-btn-primary" onclick="completeOnboarding()">
+                            Continue to Dashboard
+                        </button>
+                        <button class="onboarding-btn onboarding-btn-secondary" onclick="restartDemo()">
+                            Replay Demo
+                        </button>
+                    `;
+                }, 1000);
+                return;
+            }
+
+            const step = onboardingScript[onboardingStep];
+            
+            setTimeout(() => {
+                addOnboardingMessage(step.type, step.message);
+                chatHistory.push(step);
+                onboardingStep++;
+                playNextMessage();
+            }, step.delay || 1000);
+        }
+
+        function addOnboardingMessage(type, message) {
+            const messagesContainer = document.getElementById('onboarding-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            if (type === 'ai') {
+                messageDiv.innerHTML = `<strong>Nora:</strong><br>${message}`;
+            } else {
+                messageDiv.innerHTML = `<strong>You:</strong><br>${message}`;
+            }
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function completeOnboarding() {
+            // Set up trip data from demo
+            tripData = {
+                name: 'Bali Getaway',
+                budget: 1200,
+                duration: 10,
+                categories: {
+                    dining: 300,
+                    accommodation: 400,
+                    activities: 300,
+                    transportation: 200
+                }
+            };
+            
+            showScreen('main-app');
+            updateDashboardWithData();
+            populateChatHistory();
+        }
+
+        function restartDemo() {
+            document.getElementById('onboarding-messages').innerHTML = '';
+            document.querySelector('.onboarding-controls').innerHTML = `
+                <button class="onboarding-btn onboarding-btn-primary" id="start-demo" onclick="startDemo()">
+                    Start Demo
+                </button>
+                <button class="onboarding-btn onboarding-btn-secondary" onclick="skipOnboarding()">
+                    Skip to Dashboard
+                </button>
+            `;
+        }
+
+        function updateDashboardWithDefaults() {
+            // Set default values
+            document.getElementById('total-budget').textContent = '$1,200';
+            document.getElementById('spent-amount').textContent = '$485';
+            document.getElementById('remaining-amount').textContent = '$715';
+            document.getElementById('days-left').textContent = '7';
+            document.getElementById('trip-name').textContent = 'Current Trip: Bali Getaway';
+        }
+
+        function updateDashboardWithData() {
+            if (tripData.budget > 0) {
+                document.getElementById('total-budget').textContent = `${tripData.budget.toLocaleString()}`;
+                document.getElementById('trip-name').textContent = `Current Trip: ${tripData.name}`;
+                
+                // Update form inputs
+                document.getElementById('trip-name-input').value = tripData.name;
+                document.getElementById('total-budget-input').value = tripData.budget;
+                document.getElementById('duration-input').value = tripData.duration;
+                document.getElementById('dining-budget').value = tripData.categories.dining;
+                document.getElementById('accommodation-budget').value = tripData.categories.accommodation;
+                document.getElementById('activities-budget').value = tripData.categories.activities;
+                document.getElementById('transport-budget').value = tripData.categories.transportation;
+            } else {
+                updateDashboardWithDefaults();
+            }
+        }
+
+        function populateChatHistory() {
+            const chatMessagesContainer = document.getElementById('chat-messages');
+            const chatHistoryContainer = document.getElementById('chat-history-content');
+            
+            // Clear existing messages
+            chatMessagesContainer.innerHTML = '';
+            
+            // Add welcome message
+            const welcomeMsg = document.createElement('div');
+            welcomeMsg.className = 'message ai';
+            welcomeMsg.innerHTML = '<strong>Nora:</strong><br>Welcome back! Your Bali Getaway budget is all set up. I\'m here whenever you need help tracking expenses or planning activities. How can I assist you today?';
+            chatMessagesContainer.appendChild(welcomeMsg);
+            
+            // Add history summary
+            chatHistoryContainer.innerHTML = `
+                <div class="expense-item">
+                    <div class="expense-details">
+                        <div class="expense-icon"><i class="fas fa-comments"></i></div>
+                        <div class="expense-info">
+                            <h4>Onboarding Conversation</h4>
+                            <p>Budget setup for ${tripData.name} - ${tripData.duration} days, ${tripData.budget} total</p>
+                        </div>
+                    </div>
+                    <div class="expense-amount">Complete</div>
+                </div>
+            `;
+        }
+
+        // Navigation back to main app
+        function goToMainApp() {
+            alert('This would navigate back to the main Tripflow app. In the demo, this just shows an alert.');
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggles = document.querySelectorAll('.theme-toggle i, .theme-toggle-start i');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeToggles.forEach(toggle => toggle.className = 'fas fa-moon');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeToggles.forEach(toggle => toggle.className = 'fas fa-sun');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Sidebar Toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Page Navigation
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            document.getElementById(pageId).classList.add('active');
+            
+            const navLinks = document.querySelectorAll('.sidebar-nav a');
+            navLinks.forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('open');
+            }
+        }
+
+        // Add expense functionality
+        function addExpense() {
+            alert('Expense added successfully! This would integrate with your budget tracking.');
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.querySelectorAll('.theme-toggle i, .theme-toggle-start i').forEach(toggle => {
+                    toggle.className = 'fas fa-sun';
+                });
+            }
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.querySelector('.menu-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !menuToggle.contains(e.target) &&
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>
