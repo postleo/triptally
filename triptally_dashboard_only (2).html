@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triptally Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --navy-primary: #00b4a6;
+            --navy-secondary: #4dd0e1;
+            --navy-light: #80cbc4;
+            --navy-dark: #006064;
+            --white: #ffffff;
+            --light-gray: #f5f7fa;
+            --medium-gray: #e1e5e9;
+            --dark-gray: #64748b;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --white: #0f172a;
+            --light-gray: #1e293b;
+            --medium-gray: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--white);
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--navy-primary);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo .tally {
+            color: #4dd0e1;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid white;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle:hover {
+            background-color: white;
+            color: var(--navy-primary);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            height: calc(100vh - 80px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--light-gray);
+            border-right: 1px solid var(--medium-gray);
+            padding: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 80px);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 300px;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            flex: 1;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background-color: var(--navy-primary);
+            color: white;
+        }
+
+        .sidebar-nav i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem 0;
+        }
+
+        .sidebar-divider {
+            border: none;
+            height: 1px;
+            background-color: var(--medium-gray);
+            margin: 1rem 1.5rem;
+        }
+
+        .main-app-link {
+            color: var(--navy-primary) !important;
+            font-weight: 600 !important;
+        }
+
+        .main-app-link:hover {
+            background-color: var(--navy-primary) !important;
+            color: white !important;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            padding: 2rem;
+            background-color: var(--white);
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            width: calc(100% - 300px);
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--navy-primary);
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--light-gray);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--navy-primary);
+        }
+
+        .card-icon {
+            color: var(--navy-secondary);
+            font-size: 1.2rem;
+        }
+
+        /* Budget Overview */
+        .budget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--navy-primary), var(--navy-secondary));
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Progress Bars */
+        .progress-bar {
+            background-color: var(--medium-gray);
+            border-radius: 50px;
+            height: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--navy-primary);
+            transition: width 0.5s ease;
+            border-radius: 50px;
+        }
+
+        /* Expense List */
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: var(--white);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .expense-item:hover {
+            box-shadow: var(--shadow);
+        }
+
+        .expense-details {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .expense-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--navy-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .expense-info h4 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .expense-info p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .expense-amount {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -300px;
+                top: 80px;
+                width: 300px;
+                z-index: 999;
+                transition: left 0.3s ease;
+                background-color: var(--white);
+                border-right: 1px solid var(--medium-gray);
+                box-shadow: var(--shadow-lg);
+                height: calc(100vh - 80px);
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .budget-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">Trip<span class="tally">tally</span></a>
+                <div class="nav-controls">
+                    <button class="theme-toggle" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="#" class="active">
+                        <i class="fas fa-home"></i>Dashboard
+                    </a></li>
+                    <li><a href="#">
+                        <i class="fas fa-plus-circle"></i>Budget Setup
+                    </a></li>
+                    <li><a href="#">
+                        <i class="fas fa-comments"></i>Chat with Nora
+                    </a></li>
+                    <li><a href="#">
+                        <i class="fas fa-receipt"></i>Expenses
+                    </a></li>
+                    <li><a href="#">
+                        <i class="fas fa-calendar-day"></i>Daily Briefings
+                    </a></li>
+                </ul>
+                
+                <!-- Navigation back to main app -->
+                <div class="sidebar-footer">
+                    <hr class="sidebar-divider">
+                    <ul class="sidebar-nav">
+                        <li><a href="#" onclick="goToMainApp()" class="main-app-link">
+                            <i class="fas fa-arrow-left"></i>Back to Tripflow
+                        </a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div class="page-header">
+                <h1 class="page-title">Welcome to Triptally</h1>
+                <p class="page-subtitle">Your AI-powered travel budget companion</p>
+            </div>
+
+            <div class="budget-grid">
+                <div class="stat-card">
+                    <div class="stat-value">$1,200</div>
+                    <div class="stat-label">Total Budget</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$485</div>
+                    <div class="stat-label">Spent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$715</div>
+                    <div class="stat-label">Remaining</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">Days Left</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Current Trip: Bali Getaway</h3>
+                    <i class="fas fa-plane card-icon"></i>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 40%;"></div>
+                </div>
+                <p>40% of budget used - You're on track!</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Budget Breakdown</h3>
+                    <i class="fas fa-chart-pie card-icon"></i>
+                </div>
+                <div class="expense-item">
+                    <div class="expense-details">
+                        <div class="expense-icon"><i class="fas fa-utensils"></i></div>
+                        <div class="expense-info">
+                            <h4>Dining</h4>
+                            <p>$150 / $300 used</p>
+                        </div>
+                    </div>
+                    <div class="expense-amount">$300</div>
+                </div>
+                <div class="expense-item">
+                    <div class="expense-details">
+                        <div class="expense-icon"><i class="fas fa-bed"></i></div>
+                        <div class="expense-info">
+                            <h4>Accommodation</h4>
+                            <p>$250 / $400 used</p>
+                        </div>
+                    </div>
+                    <div class="expense-amount">$400</div>
+                </div>
+                <div class="expense-item">
+                    <div class="expense-details">
+                        <div class="expense-icon"><i class="fas fa-ticket-alt"></i></div>
+                        <div class="expense-info">
+                            <h4>Activities</h4>
+                            <p>$85 / $300 used</p>
+                        </div>
+                    </div>
+                    <div class="expense-amount">$300</div>
+                </div>
+                <div class="expense-item">
+                    <div class="expense-details">
+                        <div class="expense-icon"><i class="fas fa-car"></i></div>
+                        <div class="expense-info">
+                            <h4>Transportation</h4>
+                            <p>$0 / $200 used</p>
+                        </div>
+                    </div>
+                    <div class="expense-amount">$200</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggles = document.querySelectorAll('.theme-toggle i');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeToggles.forEach(toggle => toggle.className = 'fas fa-moon');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeToggles.forEach(toggle => toggle.className = 'fas fa-sun');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Sidebar Toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Navigation back to main app
+        function goToMainApp() {
+            alert('This would navigate back to the main Tripflow app. In the demo, this just shows an alert.');
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.querySelectorAll('.theme-toggle i').forEach(toggle => {
+                    toggle.className = 'fas fa-sun';
+                });
+            }
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.querySelector('.menu-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !menuToggle.contains(e.target) &&
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>
