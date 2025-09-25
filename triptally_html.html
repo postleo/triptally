@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triptally - AI-Powered Budget Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Start Screen -->
+    <div class="screen active" id="start-screen">
+        <div class="start-screen">
+            <button class="theme-toggle-start" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
+            
+            <div class="start-content">
+                <h1 class="start-logo">Trip<span class="tally">tally</span></h1>
+                <p class="start-subtitle">Your AI-powered travel budget companion. Meet Nora, your personal travel assistant who'll help you plan and track your perfect trip.</p>
+                
+                <div class="start-buttons">
+                    <button class="start-btn start-btn-primary" onclick="startOnboarding()">
+                        <i class="fas fa-comments"></i>
+                        Chat with Nora
+                    </button>
+                    <button class="start-btn start-btn-secondary" onclick="goToDashboard()">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Go to Dashboard
+                    </button>
+                </div>
+                
+                <p style="opacity: 0.7; font-size: 0.9rem;">New to Triptally? Start with Nora for a guided setup!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onboarding Screen -->
+    <div class="screen" id="onboarding-screen">
+        <div class="onboarding-screen">
+            <div class="onboarding-container">
+                <div class="onboarding-header">
+                    <h1>Meet Nora</h1>
+                    <p>Your AI travel assistant will guide you through setting up your first trip budget</p>
+                </div>
+                
+                <div class="onboarding-chat">
+                    <div class="onboarding-messages" id="onboarding-messages">
+                        <!-- Messages will be populated by JavaScript -->
+                    </div>
+                    
+                    <div class="onboarding-controls">
+                        <button class="onboarding-btn onboarding-btn-primary" id="start-demo" onclick="startDemo()">
+                            Start Demo
+                        </button>
+                        <button class="onboarding-btn onboarding-btn-secondary" onclick="skipOnboarding()">
+                            Skip to Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div class="screen" id="main-app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <a href="#" class="logo">Trip<span class="tally">tally</span></a>
+                    <div class="nav-controls">
+                        <button class="theme-toggle" onclick="toggleTheme()">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button class="menu-toggle" onclick="toggleSidebar()">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <nav>
+                    <ul class="sidebar-nav">
+                        <li><a href="#" onclick="showPage('dashboard')" class="active">
+                            <i class="fas fa-home"></i>Dashboard
+                        </a></li>
+                        <li><a href="#" onclick="showPage('budget-setup')">
+                            <i class="fas fa-plus-circle"></i>Budget Setup
+                        </a></li>
+                        <li><a href="#" onclick="showPage('chat')">
+                            <i class="fas fa-comments"></i>Chat with Nora
+                        </a></li>
+                        <li><a href="#" onclick="showPage('expenses')">
+                            <i class="fas fa-receipt"></i>Expenses
+                        </a></li>
+                        <li><a href="#" onclick="showPage('briefings')">
+                            <i class="fas fa-calendar-day"></i>Daily Briefings
+                        </a></li>
+                    </ul>
+                    
+                    <!-- Navigation back to main app -->
+                    <div class="sidebar-footer">
+                        <hr class="sidebar-divider">
+                        <ul class="sidebar-nav">
+                            <li><a href="#" onclick="goToMainApp()" class="main-app-link">
+                                <i class="fas fa-arrow-left"></i>Back to Tripflow
+                            </a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Dashboard Page -->
+                <div class="page active" id="dashboard">
+                    <div class="page-header">
+                        <h1 class="page-title">Welcome to Triptally</h1>
+                        <p class="page-subtitle">Your AI-powered travel budget companion</p>
+                    </div>
+
+                    <div class="budget-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-budget">$1,200</div>
+                            <div class="stat-label">Total Budget</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="spent-amount">$485</div>
+                            <div class="stat-label">Spent</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="remaining-amount">$715</div>
+                            <div class="stat-label">Remaining</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="days-left">7</div>
+                            <div class="stat-label">Days Left</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title" id="trip-name">Current Trip: Bali Getaway</h3>
+                            <i class="fas fa-plane card-icon"></i>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%;"></div>
+                        </div>
+                        <p>40% of budget used - You're on track!</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Budget Breakdown</h3>
+                            <i class="fas fa-chart-pie card-icon"></i>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-utensils"></i></div>
+                                <div class="expense-info">
+                                    <h4>Dining</h4>
+                                    <p>$150 / $300 used</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount">$300</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-bed"></i></div>
+                                <div class="expense-info">
+                                    <h4>Accommodation</h4>
+                                    <p>$250 / $400 used</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount">$400</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-ticket-alt"></i></div>
+                                <div class="expense-info">
+                                    <h4>Activities</h4>
+                                    <p>$85 / $300 used</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount">$300</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-car"></i></div>
+                                <div class="expense-info">
+                                    <h4>Transportation</h4>
+                                    <p>$0 / $200 used</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount">$200</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Setup Page -->
+                <div class="page" id="budget-setup">
+                    <div class="page-header">
+                        <h1 class="page-title">Budget Setup</h1>
+                        <p class="page-subtitle">Create your personalized travel budget</p>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">Trip Information</h3>
+                        <form>
+                            <div class="form-group">
+                                <label class="form-label">Trip Name</label>
+                                <input type="text" class="form-input" placeholder="e.g., Bali Adventure" value="Bali Getaway" id="trip-name-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Total Budget</label>
+                                <input type="number" class="form-input" placeholder="1200" value="1200" id="total-budget-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Trip Duration (days)</label>
+                                <input type="number" class="form-input" placeholder="10" value="10" id="duration-input">
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">Budget Categories</h3>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-utensils"></i></div>
+                                <div class="expense-info">
+                                    <h4>Dining</h4>
+                                    <input type="number" class="form-input" style="width: 120px;" value="300" id="dining-budget">
+                                </div>
+                            </div>
+                            <div class="expense-amount">25%</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-bed"></i></div>
+                                <div class="expense-info">
+                                    <h4>Accommodation</h4>
+                                    <input type="number" class="form-input" style="width: 120px;" value="400" id="accommodation-budget">
+                                </div>
+                            </div>
+                            <div class="expense-amount">33%</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-ticket-alt"></i></div>
+                                <div class="expense-info">
+                                    <h4>Activities</h4>
+                                    <input type="number" class="form-input" style="width: 120px;" value="300" id="activities-budget">
+                                </div>
+                            </div>
+                            <div class="expense-amount">25%</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-car"></i></div>
+                                <div class="expense-info">
+                                    <h4>Transportation</h4>
+                                    <input type="number" class="form-input" style="width: 120px;" value="200" id="transport-budget">
+                                </div>
+                            </div>
+                            <div class="expense-amount">17%</div>
+                        </div>
+                        <button class="btn btn-primary mt-3">Save Budget</button>
+                    </div>
+                </div>
+
+                <!-- Chat Page -->
+                <div class="page" id="chat">
+                    <div class="page-header">
+                        <h1 class="page-title">Chat with Nora</h1>
+                        <p class="page-subtitle">Your AI travel assistant is here to help</p>
+                    </div>
+
+                    <div class="chat-container">
+                        <div class="chat-header">
+                            <i class="fas fa-robot"></i>
+                            <span>Nora - AI Travel Assistant</span>
+                            <div class="ml-auto">
+                                <span class="badge">Online</span>
+                            </div>
+                        </div>
+                        <div class="chat-messages" id="chat-messages">
+                            <!-- Chat history will be populated here -->
+                        </div>
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" placeholder="Chat functionality is currently in demo mode..." id="chat-input" disabled>
+                            <button class="chat-send" disabled>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Chat History</h3>
+                            <i class="fas fa-history card-icon"></i>
+                        </div>
+                        <p>Your conversation history with Nora from the onboarding will appear here. This includes your trip setup and any budget discussions.</p>
+                        <div id="chat-history-content">
+                            <!-- Will be populated if user completed onboarding -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expenses Page -->
+                <div class="page" id="expenses">
+                    <div class="page-header">
+                        <h1 class="page-title">Expense Tracking</h1>
+                        <p class="page-subtitle">Monitor your spending in real-time</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Add New Expense</h3>
+                            <i class="fas fa-plus card-icon"></i>
+                        </div>
+                        <div class="expense-form-row">
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <input type="text" class="form-input" placeholder="e.g., Lunch at beachside restaurant">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Amount</label>
+                                <input type="number" class="form-input" placeholder="25">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Category</label>
+                                <select class="form-input">
+                                    <option>Dining</option>
+                                    <option>Accommodation</option>
+                                    <option>Activities</option>
+                                    <option>Transportation</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="addExpense()">Add Expense</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Expenses</h3>
+                            <i class="fas fa-history card-icon"></i>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-coffee"></i></div>
+                                <div class="expense-info">
+                                    <h4>Coffee at Local Cafe</h4>
+                                    <p>Today, 10:30 AM • Dining</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount" style="color: #ef4444;">-$40</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-utensils"></i></div>
+                                <div class="expense-info">
+                                    <h4>Dinner at Warung</h4>
+                                    <p>Yesterday, 7:00 PM • Dining</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount" style="color: #ef4444;">-$25</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-taxi"></i></div>
+                                <div class="expense-info">
+                                    <h4>Taxi to Temple</h4>
+                                    <p>Yesterday, 2:00 PM • Transportation</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount" style="color: #ef4444;">-$15</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-ticket-alt"></i></div>
+                                <div class="expense-info">
+                                    <h4>Temple Entrance Fee</h4>
+                                    <p>Yesterday, 2:30 PM • Activities</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount" style="color: #ef4444;">-$10</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Briefings Page -->
+                <div class="page" id="briefings">
+                    <div class="page-header">
+                        <h1 class="page-title">Daily Briefings</h1>
+                        <p class="page-subtitle">Your personalized travel updates</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Today's Briefing</h3>
+                            <i class="fas fa-calendar-day card-icon"></i>
+                        </div>
+                        <div class="alert alert-success">
+                            <i class="fas fa-sun"></i>
+                            <div>
+                                <strong>Good morning!</strong> Perfect beach weather today - 85°F and sunny. You have $250 remaining for today's adventures.
+                            </div>
+                        </div>
+                        <h4 style="margin-top: 1.5rem; margin-bottom: 1rem;">Today's Schedule</h4>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-swimmer"></i></div>
+                                <div class="expense-info">
+                                    <h4>Beach Day at Nusa Dua</h4>
+                                    <p>10:00 AM - Don't forget sunscreen!</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount">$30 planned</div>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-utensils"></i></div>
+                                <div class="expense-info">
+                                    <h4>Lunch at Beachside Warung</h4>
+                                    <p>1:00 PM - Try the fresh seafood</p>
+                                </div>
+                            </div>
+                            <div class="expense-amount">$20 estimated</div>
+                        </div>
+                        <button class="btn btn-primary" style="margin-top: 1rem;">
+                            <i class="fas fa-play"></i> Play Audio Briefing
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Budget Status</h3>
+                            <i class="fas fa-wallet card-icon"></i>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%;"></div>
+                        </div>
+                        <p><strong>40% used</strong> - You're perfectly on track! Keep up the great balance.</p>
+                        
+                        <h4 class="mt-3">Quick Tips</h4>
+                        <ul style="padding-left: 1.5rem; margin-top: 0.5rem; line-height: 1.6;">
+                            <li>Consider the local fish market for tonight's dinner - authentic and budget-friendly</li>
+                            <li>Beach umbrellas cost $5/day vs $15 at resorts</li>
+                            <li>Free sunset viewing at Tanah Lot temple (just parking fee)</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Previous Briefings</h3>
+                            <i class="fas fa-history card-icon"></i>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-calendar-alt"></i></div>
+                                <div class="expense-info">
+                                    <h4>Yesterday's Summary</h4>
+                                    <p>Temple visits and local cuisine - stayed $15 under budget</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary">View</button>
+                        </div>
+                        <div class="expense-item">
+                            <div class="expense-details">
+                                <div class="expense-icon"><i class="fas fa-calendar-alt"></i></div>
+                                <div class="expense-info">
+                                    <h4>Day 1 - Arrival</h4>
+                                    <p>Airport transfer and hotel check-in went smoothly</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary">View</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
